@@ -28,6 +28,13 @@ app.use(cors({
 // Use routes
 app.use('/api/', routes);
 
+app.use(express.static(path.join(__dirname, '/public')));
+
+// Serve your Svelte app's 'index.html' file at all other paths
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public', 'index.html'));
+});
+
 
 
 // Listen for new connections from clients (web browsers, etc.)

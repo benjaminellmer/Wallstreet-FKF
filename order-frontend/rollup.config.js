@@ -7,6 +7,8 @@ import livereload from 'rollup-plugin-livereload';
 import css from 'rollup-plugin-css-only';
 
 const production = !process.env.ROLLUP_WATCH;
+const outputDir = process.env.OUTPUT_DIR || '../order_system/public/build'; // Default to 'public/build' if not set
+
 
 function serve() {
 	let server;
@@ -31,12 +33,23 @@ function serve() {
 
 export default {
 	input: 'src/main.js',
-	output: {
-		sourcemap: true,
-		format: 'iife',
-		name: 'app',
-		file: 'public/build/bundle.js'
-	},
+	output: [
+		{
+		  // First output config
+		  sourcemap: true,
+		  format: 'iife',
+		  name: 'app',
+		  file: 'public/build/bundle.js'
+		  // other options
+		},
+		{
+		  // Second output config
+		  sourcemap: true,
+		  format: 'iife',
+		  name: 'app',
+		  file: `${outputDir}/bundle.js`
+		}
+	  ],
 	plugins: [
 		svelte({
 			compilerOptions: {
