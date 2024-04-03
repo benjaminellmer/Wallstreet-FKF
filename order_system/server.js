@@ -1,36 +1,15 @@
 // Example using Express.js
-const updateService = require('./services/updateService');
-
 const express = require('express');
 const http = require('http');
-
+const path = require('path');
 const socketIo = require('socket.io');
-const cron = require('node-cron');
-
-const app = express();
-
-
 const cors = require('cors');
 
-app.use(cors({
-    origin: 'http://127.0.0.1:8080'  // Your Svelte front-end URL
-}));
-
-
-app.use(express.json());
-
-
-// Example defining a route in Express
-app.get('/', (req, res) => {
-    res.send('<h1>Hello, Express.js Server!</h1>');
-});
-
-
+const updateService = require('./services/updateService');
 const routes = require('./routes/index');
 
-// Use routes
-app.use('/api/', routes);
 
+const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
@@ -39,6 +18,17 @@ const io = socketIo(server, {
     }
 });
 
+app.use(express.json());
+
+app.use(cors({
+    origin: 'http://127.0.0.1:8080'  // Your Svelte front-end URL
+}));
+
+
+// Use routes
+app.use('/api/', routes);
+
+
 
 // Listen for new connections from clients (web browsers, etc.)
 io.on('connection', (socket) => {
@@ -46,10 +36,11 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
 });
 
+updateService.startScheduledTasks(io);
+
 // Example specifying the port and starting the server
 const port = process.env.PORT || 3000; // You can use environment variables for port configuration
 server.listen(port, () => {
     console.log(`Server listening at http://127.0.0.1:${port}`);
-    updateService.startScheduledTasks(io);
 });
 
