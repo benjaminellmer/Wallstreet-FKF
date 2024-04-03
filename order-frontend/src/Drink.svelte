@@ -4,6 +4,18 @@
 
     let drinks = [];
     let socket;
+    let groupedDrinks = {};
+
+    const groupDrinksByGroup = () => {
+        groupedDrinks = drinks.reduce((groups, drink) => {
+            const group = drink.groupName;
+            if (!groups[group]) {
+                groups[group] = [];
+            }
+            groups[group].push(drink);
+            return groups;
+        }, {});
+    };
 
     onMount(() => {
         socket = io("http://127.0.0.1:3000");
@@ -43,6 +55,7 @@
             const response = await fetch("http://127.0.0.1:3000/drinks");
             if (response.ok) {
                 drinks = await response.json();
+                groupDrinksByGroup();
             } else {
                 throw new Error(`HTTP error: ${response.status}`);
             }
@@ -84,42 +97,62 @@
     <h1>Börsen FKF!</h1>
     <div class="timer">{formatTime(time)}</div>
 </div>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Group</th>
-            <th>Price</th>
-            <th>Trend</th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each drinks as drink}
-            <tr>
-                <td>{drink.id}</td>
-                <td>{drink.name}</td>
-                <td>{drink.groupName}</td>
-                <td
-                    class:trend-up={drink.newPrice > drink.price}
-                    class:trend-down={drink.newPrice < drink.price}
-                    class:trend-stable={drink.newPrice === drink.price}
-                >
-                    ${drink.price}
-                </td>
-                <td
-                    class:trend-up={drink.newPrice > drink.price}
-                    class:trend-down={drink.newPrice < drink.price}
-                    class:trend-stable={drink.newPrice === drink.price}
-                >
-                    {getTrendSymbol(drink.price, drink.newPrice)}
-                </td>
-            </tr>
-        {/each}
-    </tbody>
-</table>
+<div class="group-container">
+    {#each Object.keys(groupedDrinks) as group}
+        <div class="group-section">
+            <h2>{group}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each groupedDrinks[group] as drink}
+                        <tr>
+                            <td>{drink.name}</td>
+                            <td
+                                class:trend-up={drink.newPrice > drink.price}
+                                class:trend-down={drink.newPrice < drink.price}
+                                class:trend-stable={drink.newPrice === drink.price}
+                            >
+                                ${drink.price}
+                            </td>
+                            <td
+                                class:trend-up={drink.newPrice > drink.price}
+                                class:trend-down={drink.newPrice < drink.price}
+                                class:trend-stable={drink.newPrice === drink.price}
+                            >
+                                {getTrendSymbol(drink.price, drink.newPrice)}
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    {/each}
+</div>
 
 <style>
+
+.group-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.group-section {
+    flex: 1 1 50%; /* Füllt 50% der Breite, aber kann bei Bedarf auf 100% wachsen oder schrumpfen */
+    box-sizing: border-box;
+    padding: 1rem; /* Fügt etwas Platz zwischen den Spalten hinzu */
+}
+
+/* Optional: Fügt einen Trennstrich zwischen den Spalten hinzu */
+.group-section:nth-child(odd) {
+    border-right: 1px solid #333;
+}
     :global(body) {
         margin: 0;
         padding: 0;
