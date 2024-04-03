@@ -97,43 +97,62 @@
     <h1>Börsen FKF!</h1>
     <div class="timer">{formatTime(time)}</div>
 </div>
-{#each Object.keys(groupedDrinks) as group}
-    <section>
-        <h2>{group}</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Trend</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each groupedDrinks[group] as drink}
+<div class="group-container">
+    {#each Object.keys(groupedDrinks) as group}
+        <div class="group-section">
+            <h2>{group}</h2>
+            <table>
+                <thead>
                     <tr>
-                        <td>{drink.name}</td>
-                        <td
-                            class:trend-up={drink.newPrice > drink.price}
-                            class:trend-down={drink.newPrice < drink.price}
-                            class:trend-stable={drink.newPrice === drink.price}
-                        >
-                            ${drink.price}
-                        </td>
-                        <td
-                            class:trend-up={drink.newPrice > drink.price}
-                            class:trend-down={drink.newPrice < drink.price}
-                            class:trend-stable={drink.newPrice === drink.price}
-                        >
-                            {getTrendSymbol(drink.price, drink.newPrice)}
-                        </td>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Trend</th>
                     </tr>
-                {/each}
-            </tbody>
-        </table>
-    </section>
-{/each}
+                </thead>
+                <tbody>
+                    {#each groupedDrinks[group] as drink}
+                        <tr>
+                            <td>{drink.name}</td>
+                            <td
+                                class:trend-up={drink.newPrice > drink.price}
+                                class:trend-down={drink.newPrice < drink.price}
+                                class:trend-stable={drink.newPrice === drink.price}
+                            >
+                                ${drink.price}
+                            </td>
+                            <td
+                                class:trend-up={drink.newPrice > drink.price}
+                                class:trend-down={drink.newPrice < drink.price}
+                                class:trend-stable={drink.newPrice === drink.price}
+                            >
+                                {getTrendSymbol(drink.price, drink.newPrice)}
+                            </td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    {/each}
+</div>
 
 <style>
+
+.group-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.group-section {
+    flex: 1 1 50%; /* Füllt 50% der Breite, aber kann bei Bedarf auf 100% wachsen oder schrumpfen */
+    box-sizing: border-box;
+    padding: 1rem; /* Fügt etwas Platz zwischen den Spalten hinzu */
+}
+
+/* Optional: Fügt einen Trennstrich zwischen den Spalten hinzu */
+.group-section:nth-child(odd) {
+    border-right: 1px solid #333;
+}
     :global(body) {
         margin: 0;
         padding: 0;
