@@ -52,7 +52,7 @@
     // Function to fetch drinks from the server
     async function fetchDrinks() {
         try {
-            const response = await fetch("http://127.0.0.1:3000/drinks");
+            const response = await fetch("http://127.0.0.1:3000/api/drinks");
             if (response.ok) {
                 drinks = await response.json();
                 groupDrinksByGroup();

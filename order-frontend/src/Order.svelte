@@ -55,7 +55,7 @@
     // Function to fetch drinks from the server
     async function fetchDrinks() {
         try {
-            const response = await fetch("http://127.0.0.1:3000/drinks");
+            const response = await fetch("http://127.0.0.1:3000/api/drinks");
             if (response.ok) {
                 let fetchedDrinks = await response.json();
                 drinks = fetchedDrinks.map((drink) => ({
@@ -157,7 +157,7 @@
         };
 
         try {
-            const response = await fetch("http://127.0.0.1:3000/orders", {
+            const response = await fetch("http://127.0.0.1:3000/api/orders", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(order),

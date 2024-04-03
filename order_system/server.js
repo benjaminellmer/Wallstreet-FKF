@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 const routes = require('./routes/index');
 
 // Use routes
-app.use('/', routes);
+app.use('/api/', routes);
 
 const server = http.createServer(app);
 const io = socketIo(server, {
