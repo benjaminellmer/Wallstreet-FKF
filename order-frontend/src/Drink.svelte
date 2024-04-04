@@ -122,7 +122,7 @@
                                 class:trend-down={drink.newPrice < drink.price}
                                 class:trend-stable={drink.newPrice === drink.price}
                             >
-                                ${drink.price}
+                                {drink.price.toFixed(2)}€
                             </td>
                             <td
                                 class:trend-up={drink.newPrice > drink.price}
