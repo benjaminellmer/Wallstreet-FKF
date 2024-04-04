@@ -217,7 +217,6 @@
     {#if !!cart.length}
         <button on:click={cancelOrder}> Cancel </button>
     {/if}
-    <button on:click={enableCartView(true)}> 🛒 </button>
 </div>
 
 <ul>
@@ -238,12 +237,13 @@
         </li>
     {/each}
 </ul>
+<button class="full-width-button" on:click={enableCartView(true)}> Go to Cart 🛒 </button>
 
 <style>
     /* Add your CSS styles here {cart[product.id].quantity} */
     ul {
         list-style: none;
-        padding: 0;
+        padding: 0 0 150px;
     }
 
     .timer {
@@ -309,5 +309,19 @@
         background: transparent;
         font-size: 20px;
         cursor: pointer;
+    }
+
+    .full-width-button {
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background-color: #007bff;
+        color: white;
+        padding: 15px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-size: 16px;
     }
 </style>
