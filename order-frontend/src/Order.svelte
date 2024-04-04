@@ -1,8 +1,7 @@
 <!-- ProductList.svelte -->
 <script>
     import { onMount, onDestroy } from "svelte";
-    import io from 'socket.io-client';
-
+    import io from "socket.io-client";
 
     const backendUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
 
@@ -10,28 +9,25 @@
     let socket;
     let pendingPriceUpdate = false;
 
-
     onMount(async () => {
         socket = io(backendUrl);
 
         socket.on("connect", () => {
             console.log("Connected to socket.io server");
         });
-/*
+        /*
         socket.on("update_values", (data) => {
             console.log("Update received:", data);
 
         });*/
 
-
         socket.on("start_time", (data) => {
             stopTimer();
             startTimer(data.message);
-            console.log(data);            
-            if (isOrdering) {
+            console.log(data);
+            if (!!cart.length) {
                 pendingPriceUpdate = true;
-            }
-            else {
+            } else {
                 updateDrinks();
             }
         });
@@ -39,21 +35,19 @@
         await fetchDrinks();
     });
 
-    $: if (!isOrdering && pendingPriceUpdate) {
-            updateDrinks();
-        }
-
+    $: if (!cart.length && pendingPriceUpdate) {
+        updateDrinks();
+    }
 
     // Function to update drinks data
     function updateDrinks() {
         fetchDrinks(); // Re-fetch the drinks data
     }
 
-
     onDestroy(() => {
         console.log("onDestroy called");
         socket.close();
-    })
+    });
 
     // Function to fetch drinks from the server
     async function fetchDrinks() {
@@ -73,24 +67,16 @@
         }
     }
 
-    // Define a variable to track whether the buttons should be enabled or disabled
-    let isOrdering = false;
-
     // Define the cart object to hold products and their quantities
     let cart = {};
 
-    function toggleOrderState() {
-        if (isOrdering) {
-            // Clear the cart and reset addedToCart state for drinks
-            cart = {};
-            drinks = drinks.map((d) => ({ ...d, addedToCart: false }));
-        }
-        isOrdering = !isOrdering;
+    function cancelOrder() {
+        // Clear the cart and reset addedToCart state for drinks
+        cart = {};
+        drinks = drinks.map((d) => ({ ...d, addedToCart: false }));
     }
 
     function addToCart(drink) {
-        if (!isOrdering) return;
-
         console.log(`Added ${drink.name} to cart`);
 
         if (cart[drink.name]) {
@@ -101,7 +87,7 @@
 
         // Update drinks array to reflect addedToCart state
         drinks = drinks.map((d) =>
-            d.name === drink.name ? { ...d, addedToCart: true } : d,
+            d.name === drink.name ? { ...d, addedToCart: true } : d
         );
     }
 
@@ -111,7 +97,7 @@
             if (cart[drink.name].quantity <= 0) {
                 delete cart[drink.name];
                 drinks = drinks.map((d) =>
-                    d.name === drink.name ? { ...d, addedToCart: false } : d,
+                    d.name === drink.name ? { ...d, addedToCart: false } : d
                 );
             }
         }
@@ -131,21 +117,21 @@
         clearInterval(intervalId);
     }
 
-        // Format time for display
+    // Format time for display
     function formatTime(seconds) {
         //const hrs = Math.floor(seconds / 3600);
         const mins = Math.floor((seconds % 3600) / 60);
         const secs = seconds % 60;
         return [mins, secs]
-            .map(val => val < 10 ? `0${val}` : val)
-            .join(':');
+            .map((val) => (val < 10 ? `0${val}` : val))
+            .join(":");
     }
 
     let showCart = false;
 
     $: totalPrice = Object.values(cart).reduce(
         (sum, item) => sum + item.price * item.quantity,
-        0,
+        0
     );
 
     let orderSubmitted = false;
@@ -187,7 +173,6 @@
                 cart = {};
                 drinks = drinks.map((d) => ({ ...d, addedToCart: false }));
                 orderSubmitted = false;
-                isOrdering = false;
             }
             showCart = enable;
         };
@@ -229,9 +214,9 @@
 </div>
 
 <div class="header-container">
-    <button on:click={toggleOrderState}>
-        {isOrdering ? "Cancel" : "Order"}
-    </button>
+    {#if !!cart.length}
+        <button on:click={cancelOrder}> Cancel </button>
+    {/if}
     <button on:click={enableCartView(true)}> 🛒 </button>
 </div>
 
@@ -241,13 +226,7 @@
             <div>{drink.name}</div>
             <div>{drink.price.toFixed(2)}€</div>
             {#if !drink.addedToCart}
-                <button
-                    class:disabled={!isOrdering}
-                    on:click={isOrdering ? () => addToCart(drink) : null}
-                    disabled={!isOrdering}
-                >
-                    Add to Cart
-                </button>
+                <button on:click={addToCart(drink)}> + </button>
             {:else}
                 <div class="quantity-selector">
                     <button on:click={() => updateQuantity(drink, -1)}>←</button
@@ -302,10 +281,6 @@
         padding: 5px 10px;
         cursor: pointer;
         touch-action: manipulation;
-    }
-
-    .disabled {
-        background-color: #3d3d3d;
     }
 
     .quantity-selector {
