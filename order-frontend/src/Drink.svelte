@@ -76,7 +76,9 @@
     function startTimer(startVal) {
         time = startVal;
         intervalId = setInterval(() => {
-            time -= 1; // Increment time every second
+            if (time > 0) {
+                time -= 1; // Increment time every second
+            }
         }, 1000);
     }
 
