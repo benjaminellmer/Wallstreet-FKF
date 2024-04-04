@@ -70,8 +70,16 @@ function calculatePrice(quantityOrdered, drink, totalOrders) {
     console.log("Quantity ordered: " + quantityOrdered);
     console.log("Total orders: " + totalOrders);
   }
-  let centerPrice =
-    round_to_nearest_half((drink.maxPrice + drink.minPrice) / 2) - 1;
+  let centerPrice = round_to_nearest_half(
+    (drink.maxPrice + drink.minPrice) / 2
+  );
+
+  let dif = centerPrice - drink.minPrice;
+  if (dif > 1.5) {
+    centerPrice = centerPrice - 1;
+  } else if (dif > 1.0) {
+    centerPrice = centerPrice - 0.5;
+  }
   let newPrice = drink.price;
 
   if (totalOrders < 5) {
