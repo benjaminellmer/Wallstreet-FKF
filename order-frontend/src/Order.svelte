@@ -209,7 +209,7 @@
                         ).toFixed(2)}€
                     </li>
                 {/each}
-                <h2>Total Price: {totalPrice.toFixed(2)}</h2>
+                <h2>Total Price: {totalPrice.toFixed(2)}€</h2>
                 {#if orderSubmitBtn}
                     <button on:click={submitOrder}>Submit Order</button>
                 {/if}
@@ -239,7 +239,7 @@
     {#each drinks as drink}
         <li key={drink.id}>
             <div>{drink.name}</div>
-            <div>${drink.price.toFixed(2)}</div>
+            <div>{drink.price.toFixed(2)}€</div>
             {#if !drink.addedToCart}
                 <button
                     class:disabled={!isOrdering}
