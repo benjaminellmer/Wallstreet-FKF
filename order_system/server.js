@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const updateService = require('./services/updateService');
 const routes = require('./routes/index');
+const db = require('./DatabaseAccess/databaseAccess');
 
 
 const app = express();
@@ -47,5 +48,38 @@ updateService.startScheduledTasks(io);
 const port = process.env.PORT || 3000; // You can use environment variables for port configuration
 server.listen(port, () => {
     console.log(`Server listening at http://127.0.0.1:${port}`);
+});
+
+// Function to be called on shutdown
+function onShutdown() {
+    console.log('Server is shutting down, performing cleanup...');
+    // Perform your cleanup tasks here
+    // For example: close database connections, stop background services, etc.
+    db.write("DELETE FROM order_items;")
+    db.write("DELETE FROM orders;")
+}
+
+// Handle shutdown signals
+process.on('SIGINT', () => { // Signal for interruption (Ctrl+C)
+    console.log('SIGINT signal received.');
+    onShutdown();
+    server.close(() => {
+        console.log('Server closed.');
+        process.exit(0);
+    });
+});
+
+process.on('SIGTERM', () => { // Signal for termination
+    console.log('SIGTERM signal received.');
+    onShutdown();
+    server.close(() => {
+        console.log('Server closed.');
+        process.exit(0);
+    });
+});
+
+process.on('exit', (code) => { // Normal exit
+    console.log(`Process exited with code ${code}`);
+    onShutdown();
 });
 
