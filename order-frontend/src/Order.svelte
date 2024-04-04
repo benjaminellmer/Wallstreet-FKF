@@ -204,7 +204,7 @@
                 {#each Object.values(cart) as item}
                     <li>
                         {item.name}
-                        {item.price}€ x {item.quantity} | {(
+                        {item.price.toFixed(2)}€ x {item.quantity} | {(
                             item.quantity * item.price
                         ).toFixed(2)}€
                     </li>
