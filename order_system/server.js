@@ -57,6 +57,7 @@ function onShutdown() {
     // For example: close database connections, stop background services, etc.
     db.write("DELETE FROM order_items;")
     db.write("DELETE FROM orders;")
+    process.exit(0);
 }
 
 // Handle shutdown signals
