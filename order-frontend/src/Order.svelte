@@ -93,25 +93,25 @@
 
         console.log(`Added ${drink.name} to cart`);
 
-        if (cart[drink.id]) {
-            cart[drink.id].quantity++;
+        if (cart[drink.name]) {
+            cart[drink.name].quantity++;
         } else {
-            cart[drink.id] = { ...drink, quantity: 1 };
+            cart[drink.name] = { ...drink, quantity: 1 };
         }
 
         // Update drinks array to reflect addedToCart state
         drinks = drinks.map((d) =>
-            d.id === drink.id ? { ...d, addedToCart: true } : d,
+            d.name === drink.name ? { ...d, addedToCart: true } : d,
         );
     }
 
     function updateQuantity(drink, change) {
-        if (cart[drink.id]) {
-            cart[drink.id].quantity += change;
-            if (cart[drink.id].quantity <= 0) {
-                delete cart[drink.id];
+        if (cart[drink.name]) {
+            cart[drink.name].quantity += change;
+            if (cart[drink.name].quantity <= 0) {
+                delete cart[drink.name];
                 drinks = drinks.map((d) =>
-                    d.id === drink.id ? { ...d, addedToCart: false } : d,
+                    d.name === drink.name ? { ...d, addedToCart: false } : d,
                 );
             }
         }
@@ -237,7 +237,7 @@
 
 <ul>
     {#each drinks as drink}
-        <li key={drink.id}>
+        <li key={drink.name}>
             <div>{drink.name}</div>
             <div>${drink.price.toFixed(2)}</div>
             {#if !drink.addedToCart}
@@ -252,7 +252,7 @@
                 <div class="quantity-selector">
                     <button on:click={() => updateQuantity(drink, -1)}>←</button
                     >
-                    <span>{cart[drink.id]?.quantity}</span>
+                    <span>{cart[drink.name]?.quantity}</span>
                     <button on:click={() => updateQuantity(drink, 1)}>→</button>
                 </div>
             {/if}
