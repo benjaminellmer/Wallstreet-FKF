@@ -13,16 +13,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: 'http://127.0.0.1:8080', // Same as above
+        origin: '*', // Same as above
         methods: ['GET', 'POST']
     }
 });
 
 app.use(express.json());
 
-app.use(cors({
-    origin: 'http://127.0.0.1:8080'  // Your Svelte front-end URL
-}));
+app.use(cors());
 
 
 // Use routes

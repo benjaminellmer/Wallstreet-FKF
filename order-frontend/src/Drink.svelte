@@ -2,6 +2,8 @@
     import { onDestroy, onMount } from "svelte";
     import io from "socket.io-client";
 
+    const backendUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
+
     let drinks = [];
     let socket;
     let groupedDrinks = {};
@@ -18,7 +20,7 @@
     };
 
     onMount(() => {
-        socket = io("http://127.0.0.1:3000");
+        socket = io(backendUrl);
 
         socket.on("connect", () => {
             console.log("Connected to socket.io server");
@@ -52,7 +54,7 @@
     // Function to fetch drinks from the server
     async function fetchDrinks() {
         try {
-            const response = await fetch("http://127.0.0.1:3000/api/drinks");
+            const response = await fetch(backendUrl + "/api/drinks");
             if (response.ok) {
                 drinks = await response.json();
                 groupDrinksByGroup();
