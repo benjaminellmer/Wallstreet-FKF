@@ -301,6 +301,7 @@
         border: none;
         padding: 5px 10px;
         cursor: pointer;
+        touch-action: manipulation;
     }
 
     .disabled {
